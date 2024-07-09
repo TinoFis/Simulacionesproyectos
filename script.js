@@ -1,15 +1,39 @@
 window.onload = function() {
     const canvas = document.getElementById('simulationCanvas');
     const context = canvas.getContext('2d');
+    const form = document.getElementById('form');
+    const errorMessage = document.getElementById('errorMessage');
+    const loginForm = document.getElementById('loginForm');
+    const simulation = document.getElementById('simulation');
 
-    canvas.width = 800;
-    canvas.height = 600;
+    const validUsername = 'Usuario';
+    const validPassword = '12345';
 
-    function draw() {
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        context.fillStyle = 'blue';
-        context.fillRect(50, 50, 200, 100);
+    form.onsubmit = function(event) {
+        event.preventDefault();
+
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        if (username === validUsername && password === validPassword) {
+            loginForm.style.display = 'none';
+            simulation.style.display = 'block';
+            initSimulation();
+        } else {
+            errorMessage.textContent = 'Usuario o contraseña incorrectos';
+        }
+    };
+
+    function initSimulation() {
+        canvas.width = 800;
+        canvas.height = 600;
+
+        function draw() {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.fillStyle = 'blue';
+            context.fillRect(50, 50, 200, 100);
+        }
+
+        draw();
     }
-
-    draw();
-}
+};
