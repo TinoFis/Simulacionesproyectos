@@ -8,7 +8,25 @@
 </head>
 <body>
     <h1>Simulaciones de Física</h1>
-    <canvas id="simulationCanvas"></canvas>
+
+    <div id="loginForm">
+        <h2>Login</h2>
+        <form id="form">
+            <label for="username">Usuario:</label>
+            <input type="text" id="username" name="username" required>
+            <br>
+            <label for="password">Contraseña:</label>
+            <input type="password" id="password" name="password" required>
+            <br>
+            <button type="submit">Login</button>
+        </form>
+        <p id="errorMessage" style="color: red;"></p>
+    </div>
+
+    <div id="simulation" style="display: none;">
+        <canvas id="simulationCanvas"></canvas>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
