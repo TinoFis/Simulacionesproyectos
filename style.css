@@ -71,6 +71,27 @@ h1 {
     margin-top: 20px;
 }
 
+.controls {
+    margin-bottom: 20px;
+}
+
+.controls button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background: #ffeb3b;
+    color: #333;
+    font-size: 1.2em;
+    cursor: pointer;
+    margin: 5px;
+    transition: background 0.3s, transform 0.3s;
+}
+
+.controls button:hover {
+    background: #ffc107;
+    transform: scale(1.05);
+}
+
 canvas {
     border: 2px solid #fff;
     margin-top: 20px;
