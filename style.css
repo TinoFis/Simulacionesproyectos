@@ -1,18 +1,29 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Arial', sans-serif;
     text-align: center;
     margin: 0;
     padding: 0;
+    background: linear-gradient(135deg, #ff4081, #81d4fa);
+    color: #fff;
 }
 
-canvas {
-    border: 1px solid black;
+h1 {
+    font-size: 3em;
     margin-top: 20px;
 }
 
 #loginForm {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
     display: inline-block;
     margin-top: 50px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+#loginForm h2 {
+    margin-bottom: 20px;
+    color: #ffeb3b;
 }
 
 #form {
@@ -21,11 +32,47 @@ canvas {
     align-items: center;
 }
 
-#form label,
+#form label {
+    margin: 5px;
+    font-size: 1.2em;
+}
+
 #form input {
     margin: 5px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    width: 200px;
+    font-size: 1em;
 }
 
 #form button {
     margin-top: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background: #ffeb3b;
+    color: #333;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+}
+
+#form button:hover {
+    background: #ffc107;
+    transform: scale(1.05);
+}
+
+#errorMessage {
+    margin-top: 10px;
+}
+
+#simulation {
+    margin-top: 20px;
+}
+
+canvas {
+    border: 2px solid #fff;
+    margin-top: 20px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
