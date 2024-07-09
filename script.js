@@ -15,19 +15,18 @@ window.onload = function() {
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
 
-        console.log('Username:', username);
-        console.log('Password:', password);
-
         if (username === validUsername && password === validPassword) {
-            console.log('Login successful');
             loginForm.style.display = 'none';
             simulation.style.display = 'block';
             initSimulation();
         } else {
-            console.log('Login failed');
             errorMessage.textContent = 'Usuario o contraseña incorrectos';
         }
     };
+
+    let balls = [];
+    const columns = 20; // Number of columns for bins
+    const bins = new Array(columns).fill(0);
 
     function initSimulation() {
         canvas.width = 800;
@@ -35,10 +34,53 @@ window.onload = function() {
 
         function draw() {
             context.clearRect(0, 0, canvas.width, canvas.height);
-            context.fillStyle = 'blue';
-            context.fillRect(50, 50, 200, 100);
+
+            // Draw the balls
+            balls.forEach(ball => {
+                context.beginPath();
+                context.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+                context.fillStyle = ball.color;
+                context.fill();
+                context.closePath();
+            });
+
+            // Draw the bins
+            const binWidth = canvas.width / columns;
+            for (let i = 0; i < columns; i++) {
+                context.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                context.fillRect(i * binWidth, canvas.height - bins[i] * 10, binWidth - 2, bins[i] * 10);
+            }
         }
 
-        draw();
+        function update() {
+            balls.forEach(ball => {
+                if (ball.y < canvas.height - ball.radius) {
+                    ball.y += ball.vy;
+                } else {
+                    const binIndex = Math.floor(ball.x / (canvas.width / columns));
+                    bins[binIndex]++;
+                    balls = balls.filter(b => b !== ball);
+                }
+            });
+        }
+
+        function loop() {
+            update();
+            draw();
+            requestAnimationFrame(loop);
+        }
+
+        loop();
     }
+
+    window.addBalls = function(num) {
+        for (let i = 0; i < num; i++) {
+            const radius = 5;
+            const x = canvas.width / 2;
+            const y = radius;
+            const vy = 2;
+            const color = '#' + Math.floor(Math.random() * 16777215).toString(16);
+            balls.push({ x, y, vy, radius, color });
+        }
+    };
 };
