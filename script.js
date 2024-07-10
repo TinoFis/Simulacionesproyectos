@@ -25,12 +25,24 @@ window.onload = function() {
     };
 
     let balls = [];
-    const columns = 20; // Number of columns for bins
+    const pins = [];
+    const columns = 10; // Number of columns for bins
     const bins = new Array(columns).fill(0);
 
     function initSimulation() {
         canvas.width = 800;
         canvas.height = 600;
+
+        // Create pins
+        const pinRows = 10;
+        const pinSpacing = canvas.width / columns;
+        for (let row = 0; row < pinRows; row++) {
+            for (let col = 0; col < columns; col++) {
+                const x = col * pinSpacing + (row % 2 === 0 ? pinSpacing / 2 : 0);
+                const y = row * pinSpacing;
+                pins.push({ x, y });
+            }
+        }
 
         function draw() {
             context.clearRect(0, 0, canvas.width, canvas.height);
@@ -40,6 +52,15 @@ window.onload = function() {
                 context.beginPath();
                 context.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
                 context.fillStyle = ball.color;
+                context.fill();
+                context.closePath();
+            });
+
+            // Draw the pins
+            pins.forEach(pin => {
+                context.beginPath();
+                context.arc(pin.x, pin.y, 5, 0, Math.PI * 2);
+                context.fillStyle = '#ffffff';
                 context.fill();
                 context.closePath();
             });
@@ -56,6 +77,17 @@ window.onload = function() {
             balls.forEach(ball => {
                 if (ball.y < canvas.height - ball.radius) {
                     ball.y += ball.vy;
+
+                    // Check for collisions with pins
+                    pins.forEach(pin => {
+                        const dx = ball.x - pin.x;
+                        const dy = ball.y - pin.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        if (distance < ball.radius + 5) {
+                            ball.vy *= 0.9; // Slow down the ball slightly after a collision
+                            ball.x += Math.random() < 0.5 ? -ball.radius : ball.radius;
+                        }
+                    });
                 } else {
                     const binIndex = Math.floor(ball.x / (canvas.width / columns));
                     bins[binIndex]++;
