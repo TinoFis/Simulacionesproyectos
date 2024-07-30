@@ -10,7 +10,7 @@ function initSimulation() {
     let lightRay = {
         x: 100,
         y: 300,
-        angle: Math.PI / 4, // 45 degrees
+        angle: 0, // Start at 0 degrees
         speed: 5
     };
 
@@ -26,9 +26,9 @@ function initSimulation() {
 
     const slider = document.createElement('input');
     slider.type = 'range';
-    slider.min = 0;
-    slider.max = 90;
-    slider.value = 45;
+    slider.min = -45;
+    slider.max = 45;
+    slider.value = 0;
     slider.style.width = '100%';
     slider.oninput = (e) => {
         const angleInDegrees = e.target.value;
