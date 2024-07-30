@@ -2,7 +2,7 @@ function initSimulation() {
     const canvas = document.getElementById('simulationCanvas');
     const context = canvas.getContext('2d');
 
-    canvas.width = 800;
+    canvas.width = 600;
     canvas.height = 600;
 
     let lightRay = {
