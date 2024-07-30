@@ -23,6 +23,13 @@
         <p id="errorMessage" style="color: red;"></p>
     </div>
 
+    <div id="selectionMenu" style="display: none;">
+        <h2>Selecciona una simulación</h2>
+        <button onclick="startSimulation('simulation1')">Simulación 1</button>
+        <button onclick="startSimulation('simulation2')">Simulación 2</button>
+        <!-- Add more buttons for additional simulations -->
+    </div>
+
     <div id="simulation" style="display: none;">
         <div class="controls">
             <button onclick="addBalls(1)">Lanzar 1 bola</button>
