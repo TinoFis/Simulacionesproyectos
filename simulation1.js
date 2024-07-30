@@ -10,7 +10,7 @@ function initSimulation() {
   let lightRay = {
     x: 100,
     y: 300,
-    angle: 0, 
+    angle: 0,
     speed: 5
   };
 
@@ -30,10 +30,10 @@ function initSimulation() {
   slider.min = -45;
   slider.max = 45;
   slider.value = 0;
-  slider.style.width = '250px'; 
+  slider.style.width = '250px';
   slider.style.height = '15px';
-  slider.style.marginTop = '10px'; 
-  slider.style.marginBottom = '10px'; 
+  slider.style.marginTop = '10px';
+  slider.style.marginBottom = '10px';
   const angleDisplay = document.createElement('div');
   angleDisplay.textContent = `Angle: ${slider.value}°`;
   document.getElementById('simulation').prepend(angleDisplay); // Add above slider
@@ -47,7 +47,7 @@ function initSimulation() {
   };
 
   // Add Labels for Light Rays and Angle Display
-  function drawLabelsAndAngle() {
+  function drawLabelsAndAngle(reflectionAngle, refractedAngle) {
     context.fillStyle = '#ffffff';
     context.font = '12px Arial';
     context.fillText(`Incident Angle: ${slider.value}°`, 10, 20);
@@ -70,7 +70,7 @@ function initSimulation() {
     context.moveTo(boundary.x1, boundary.y1);
     context.lineTo(boundary.x2, boundary.y2);
     context.strokeStyle = '#ffffff';
-    context.lineWidth = 2; 
+    context.lineWidth = 2;
     context.stroke();
     context.closePath();
 
@@ -83,30 +83,34 @@ function initSimulation() {
     context.moveTo(lightRay.x, lightRay.y);
     context.lineTo(incidentEndX, incidentEndY);
     context.strokeStyle = '#ffeb3b';
-    context.lineWidth = 4; 
+    context.lineWidth = 4;
     context.stroke();
     context.closePath();
 
     // Calculate reflection
     const reflectionAngle = Math.PI - lightRay.angle;
-    const reflectionEndX = canvas.width; // Extend to the edge of the canvas
-    const reflectionEndY = incidentEndY + (canvas.width - incidentEndX) * Math.tan(reflectionAngle);
+    const reflectionEndX = canvas.width;
+    const reflectionEndY = incidentEndY + (reflectionEndX - incidentEndX) * Math.tan(reflectionAngle); // Corrected
 
     // Calculate refraction using Snell's law
     const incidentAngle = Math.PI / 2 - lightRay.angle;
     const sinIncidentAngle = Math.sin(incidentAngle);
     const sinRefractedAngle = (refractiveIndex1 / refractiveIndex2) * sinIncidentAngle;
-    const refractedAngle = Math.asin(sinRefractedAngle);
+    let refractedAngle = Math.asin(sinRefractedAngle);
 
-    const refractedEndX = canvas.width; // Extend to the edge of the canvas
-    const refractedEndY = incidentEndY + (canvas.width - incidentEndX) * Math.tan(refractedAngle);
+    if (isNaN(refractedAngle)) { // Check for total internal reflection
+        refractedAngle = Math.PI / 2; // If total internal reflection, the refracted ray goes along the boundary
+    }
+
+    const refractedEndX = canvas.width;
+    const refractedEndY = incidentEndY + (refractedEndX - incidentEndX) * Math.tan(refractedAngle); // Corrected
 
     // Draw the reflected light ray
     context.beginPath();
     context.moveTo(incidentEndX, incidentEndY);
     context.lineTo(reflectionEndX, reflectionEndY);
     context.strokeStyle = '#00ff00';
-    context.lineWidth = 4; 
+    context.lineWidth = 4;
     context.stroke();
     context.closePath();
 
@@ -118,8 +122,8 @@ function initSimulation() {
     context.lineWidth = 4;
     context.stroke();
     context.closePath();
-    
-    drawLabelsAndAngle(); 
+
+    drawLabelsAndAngle(reflectionAngle, refractedAngle);
   }
 
   draw();
