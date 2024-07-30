@@ -22,6 +22,19 @@ function initSimulation() {
     const refractiveIndex1 = 1; // Air
     const refractiveIndex2 = 1.5; // Glass or water
 
+    const slider = document.createElement('input');
+    slider.type = 'range';
+    slider.min = 0;
+    slider.max = 90;
+    slider.value = 45;
+    slider.style.width = '100%';
+    slider.oninput = (e) => {
+        const angleInDegrees = e.target.value;
+        lightRay.angle = angleInDegrees * (Math.PI / 180);
+        draw();
+    };
+    document.getElementById('simulation').prepend(slider);
+
     function draw() {
         context.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -33,36 +46,52 @@ function initSimulation() {
         context.stroke();
         context.closePath();
 
-        // Draw the light ray
+        // Draw the incident light ray
         context.beginPath();
         context.moveTo(lightRay.x, lightRay.y);
-        context.lineTo(lightRay.x + 50 * Math.cos(lightRay.angle), lightRay.y + 50 * Math.sin(lightRay.angle));
+        let incidentEndX = lightRay.x + 300 * Math.cos(lightRay.angle);
+        let incidentEndY = lightRay.y + 300 * Math.sin(lightRay.angle);
+        context.lineTo(incidentEndX, incidentEndY);
         context.strokeStyle = '#ffeb3b';
+        context.stroke();
+        context.closePath();
+
+        // Calculate the point of incidence
+        if (incidentEndX >= boundary.x1) {
+            incidentEndX = boundary.x1;
+            incidentEndY = lightRay.y + (boundary.x1 - lightRay.x) * Math.tan(lightRay.angle);
+        }
+
+        // Calculate reflection
+        const reflectionAngle = Math.PI - lightRay.angle;
+        const reflectionEndX = incidentEndX + 300 * Math.cos(reflectionAngle);
+        const reflectionEndY = incidentEndY + 300 * Math.sin(reflectionAngle);
+
+        // Calculate refraction using Snell's law
+        const incidentAngle = lightRay.angle - Math.PI / 2;
+        const sinIncidentAngle = Math.sin(incidentAngle);
+        const sinRefractedAngle = (refractiveIndex1 / refractiveIndex2) * sinIncidentAngle;
+        const refractedAngle = Math.asin(sinRefractedAngle) + Math.PI / 2;
+
+        const refractedEndX = incidentEndX + 300 * Math.cos(refractedAngle);
+        const refractedEndY = incidentEndY + 300 * Math.sin(refractedAngle);
+
+        // Draw the reflected light ray
+        context.beginPath();
+        context.moveTo(incidentEndX, incidentEndY);
+        context.lineTo(reflectionEndX, reflectionEndY);
+        context.strokeStyle = '#00ff00';
+        context.stroke();
+        context.closePath();
+
+        // Draw the refracted light ray
+        context.beginPath();
+        context.moveTo(incidentEndX, incidentEndY);
+        context.lineTo(refractedEndX, refractedEndY);
+        context.strokeStyle = '#0000ff';
         context.stroke();
         context.closePath();
     }
 
-    function update() {
-        lightRay.x += lightRay.speed * Math.cos(lightRay.angle);
-        lightRay.y += lightRay.speed * Math.sin(lightRay.angle);
-
-        // Check for intersection with the boundary
-        if (lightRay.x >= boundary.x1 && lightRay.x <= boundary.x2) {
-            const incidentAngle = lightRay.angle - Math.PI / 2;
-            const sinIncidentAngle = Math.sin(incidentAngle);
-            const sinRefractedAngle = (refractiveIndex1 / refractiveIndex2) * sinIncidentAngle;
-            const refractedAngle = Math.asin(sinRefractedAngle) + Math.PI / 2;
-
-            lightRay.angle = refractedAngle;
-            lightRay.x = boundary.x1; // Reset position to boundary
-        }
-    }
-
-    function loop() {
-        update();
-        draw();
-        requestAnimationFrame(loop);
-    }
-
-    loop();
+    draw();
 }
