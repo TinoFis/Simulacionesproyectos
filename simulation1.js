@@ -51,6 +51,8 @@ function initSimulation() {
     context.fillStyle = '#ffffff';
     context.font = '12px Arial';
     context.fillText(`Incident Angle: ${slider.value}°`, 10, 20);
+    context.fillText(`Reflected Angle: ${Math.round((reflectionAngle * 180 / Math.PI))}°`, 10, 40);
+    context.fillText(`Refracted Angle: ${Math.round((refractedAngle * 180 / Math.PI))}°`, 10, 60);
     context.fillText("Incident", lightRay.x + 5, lightRay.y - 5);
     context.fillText("Reflected", reflectionEndX + 5, reflectionEndY - 5);
     context.fillText("Refracted", refractedEndX + 5, refractedEndY - 5);
@@ -87,8 +89,8 @@ function initSimulation() {
 
     // Calculate reflection
     const reflectionAngle = Math.PI - lightRay.angle;
-    const reflectionEndX = incidentEndX + 300 * Math.cos(reflectionAngle);
-    const reflectionEndY = incidentEndY + 300 * Math.sin(reflectionAngle);
+    const reflectionEndX = canvas.width; // Extend to the edge of the canvas
+    const reflectionEndY = incidentEndY + (canvas.width - incidentEndX) * Math.tan(reflectionAngle);
 
     // Calculate refraction using Snell's law
     const incidentAngle = Math.PI / 2 - lightRay.angle;
@@ -96,8 +98,8 @@ function initSimulation() {
     const sinRefractedAngle = (refractiveIndex1 / refractiveIndex2) * sinIncidentAngle;
     const refractedAngle = Math.asin(sinRefractedAngle);
 
-    const refractedEndX = incidentEndX + 300 * Math.cos(refractedAngle);
-    const refractedEndY = incidentEndY + 300 * Math.sin(refractedAngle);
+    const refractedEndX = canvas.width; // Extend to the edge of the canvas
+    const refractedEndY = incidentEndY + (canvas.width - incidentEndX) * Math.tan(refractedAngle);
 
     // Draw the reflected light ray
     context.beginPath();
