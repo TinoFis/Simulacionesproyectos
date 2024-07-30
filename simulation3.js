@@ -57,19 +57,17 @@ function initSimulation() {
         // Draw the incident light ray
         context.beginPath();
         context.moveTo(lightRay.x, lightRay.y);
-        let incidentEndX = lightRay.x + 300 * Math.cos(lightRay.angle);
-        let incidentEndY = lightRay.y + 300 * Math.sin(lightRay.angle);
+        let incidentEndX = lightRay.x + (boundary.x1 - lightRay.x) * Math.tan(lightRay.angle);
+        let incidentEndY = lightRay.y + (boundary.x1 - lightRay.x) * Math.tan(lightRay.angle);
+        if (incidentEndX > boundary.x1) {
+            incidentEndX = boundary.x1;
+            incidentEndY = lightRay.y + (boundary.x1 - lightRay.x) * Math.tan(lightRay.angle);
+        }
         context.lineTo(incidentEndX, incidentEndY);
         context.strokeStyle = '#ffeb3b';
         context.lineWidth = 4; // Incident light beam thickness
         context.stroke();
         context.closePath();
-
-        // Calculate the point of incidence
-        if (incidentEndX >= boundary.x1) {
-            incidentEndX = boundary.x1;
-            incidentEndY = lightRay.y + (boundary.x1 - lightRay.x) * Math.tan(lightRay.angle);
-        }
 
         // Calculate reflection
         const reflectionAngle = Math.PI - lightRay.angle;
