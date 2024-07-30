@@ -4,6 +4,7 @@ window.onload = function() {
     const form = document.getElementById('form');
     const errorMessage = document.getElementById('errorMessage');
     const loginForm = document.getElementById('loginForm');
+    const selectionMenu = document.getElementById('selectionMenu');
     const simulation = document.getElementById('simulation');
 
     const validUsername = 'Usuario';
@@ -17,8 +18,7 @@ window.onload = function() {
 
         if (username === validUsername && password === validPassword) {
             loginForm.style.display = 'none';
-            simulation.style.display = 'block';
-            initSimulation();
+            selectionMenu.style.display = 'block';
         } else {
             errorMessage.textContent = 'Usuario o contraseña incorrectos';
         }
@@ -33,7 +33,7 @@ window.onload = function() {
         canvas.width = 800;
         canvas.height = 600;
 
-        // Create pins
+        // Example pin setup for a simulation
         const pinRows = 10;
         const pinSpacing = canvas.width / columns;
         for (let row = 0; row < pinRows; row++) {
@@ -114,5 +114,11 @@ window.onload = function() {
             const color = '#' + Math.floor(Math.random() * 16777215).toString(16);
             balls.push({ x, y, vy, radius, color });
         }
+    };
+
+    window.startSimulation = function(simulationType) {
+        selectionMenu.style.display = 'none';
+        simulation.style.display = 'block';
+        initSimulation(); // You can modify this to initialize different simulations based on `simulationType`
     };
 };
