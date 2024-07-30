@@ -54,15 +54,13 @@ function initSimulation() {
         context.stroke();
         context.closePath();
 
+        // Calculate the point of incidence
+        let incidentEndX = boundary.x1;
+        let incidentEndY = lightRay.y + (boundary.x1 - lightRay.x) * Math.tan(lightRay.angle);
+
         // Draw the incident light ray
         context.beginPath();
         context.moveTo(lightRay.x, lightRay.y);
-        let incidentEndX = lightRay.x + (boundary.x1 - lightRay.x) * Math.tan(lightRay.angle);
-        let incidentEndY = lightRay.y + (boundary.x1 - lightRay.x) * Math.tan(lightRay.angle);
-        if (incidentEndX > boundary.x1) {
-            incidentEndX = boundary.x1;
-            incidentEndY = lightRay.y + (boundary.x1 - lightRay.x) * Math.tan(lightRay.angle);
-        }
         context.lineTo(incidentEndX, incidentEndY);
         context.strokeStyle = '#ffeb3b';
         context.lineWidth = 4; // Incident light beam thickness
@@ -75,10 +73,10 @@ function initSimulation() {
         const reflectionEndY = incidentEndY + 300 * Math.sin(reflectionAngle);
 
         // Calculate refraction using Snell's law
-        const incidentAngle = lightRay.angle - Math.PI / 2;
+        const incidentAngle = Math.PI / 2 - lightRay.angle;
         const sinIncidentAngle = Math.sin(incidentAngle);
         const sinRefractedAngle = (refractiveIndex1 / refractiveIndex2) * sinIncidentAngle;
-        const refractedAngle = Math.asin(sinRefractedAngle) + Math.PI / 2;
+        const refractedAngle = Math.asin(sinRefractedAngle);
 
         const refractedEndX = incidentEndX + 300 * Math.cos(refractedAngle);
         const refractedEndY = incidentEndY + 300 * Math.sin(refractedAngle);
