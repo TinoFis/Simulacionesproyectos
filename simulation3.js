@@ -1,4 +1,6 @@
 function initSimulation() {
+    console.log("Simulation 2 initialized");
+
     const canvas = document.getElementById('simulationCanvas');
     const context = canvas.getContext('2d');
 
@@ -31,18 +33,24 @@ function initSimulation() {
     slider.oninput = (e) => {
         const angleInDegrees = e.target.value;
         lightRay.angle = angleInDegrees * (Math.PI / 180);
+        console.log("Slider changed: ", angleInDegrees);
         draw();
     };
     document.getElementById('simulation').prepend(slider);
 
     function draw() {
-        context.clearRect(0, 0, canvas.width, canvas.height);
+        console.log("Drawing simulation frame");
+        
+        // Fill the background with black
+        context.fillStyle = '#000000';
+        context.fillRect(0, 0, canvas.width, canvas.height);
 
         // Draw the boundary
         context.beginPath();
         context.moveTo(boundary.x1, boundary.y1);
         context.lineTo(boundary.x2, boundary.y2);
         context.strokeStyle = '#ffffff';
+        context.lineWidth = 2; // Boundary line width
         context.stroke();
         context.closePath();
 
@@ -53,6 +61,7 @@ function initSimulation() {
         let incidentEndY = lightRay.y + 300 * Math.sin(lightRay.angle);
         context.lineTo(incidentEndX, incidentEndY);
         context.strokeStyle = '#ffeb3b';
+        context.lineWidth = 4; // Incident light beam thickness
         context.stroke();
         context.closePath();
 
@@ -81,6 +90,7 @@ function initSimulation() {
         context.moveTo(incidentEndX, incidentEndY);
         context.lineTo(reflectionEndX, reflectionEndY);
         context.strokeStyle = '#00ff00';
+        context.lineWidth = 4; // Reflected light beam thickness
         context.stroke();
         context.closePath();
 
@@ -89,6 +99,7 @@ function initSimulation() {
         context.moveTo(incidentEndX, incidentEndY);
         context.lineTo(refractedEndX, refractedEndY);
         context.strokeStyle = '#0000ff';
+        context.lineWidth = 4; // Refracted light beam thickness
         context.stroke();
         context.closePath();
     }
