@@ -1,102 +1,108 @@
 function initSimulation() {
+    console.log("Simulation 2 initialized");
+
     const canvas = document.getElementById('simulationCanvas');
     const context = canvas.getContext('2d');
-    const controlsDiv = document.createElement('div');
-    controlsDiv.className = 'controls';
-    controlsDiv.innerHTML = `
-        <button onclick="addBalls(1)">Lanzar 1 bola</button>
-        <button onclick="addBalls(10)">Lanzar 10 bolas</button>
-        <button onclick="addBalls(20)">Lanzar 20 bolas</button>
-    `;
-    document.getElementById('simulation').prepend(controlsDiv);
-
-    let balls = [];
-    const pins = [];
-    const columns = 10;
-    const bins = new Array(columns).fill(0);
 
     canvas.width = 800;
     canvas.height = 600;
 
-    // Create pins
-    const pinRows = 10;
-    const pinSpacing = canvas.width / columns;
-    for (let row = 0; row < pinRows; row++) {
-        for (let col = 0; col < columns; col++) {
-            const x = col * pinSpacing + (row % 2 === 0 ? pinSpacing / 2 : 0);
-            const y = row * pinSpacing;
-            pins.push({ x, y });
-        }
-    }
+    let lightRay = {
+        x: 100,
+        y: 300,
+        angle: Math.PI / 4, // 45 degrees
+        speed: 5
+    };
+
+    const boundary = {
+        x1: 400,
+        y1: 0,
+        x2: 400,
+        y2: 600
+    };
+
+    const refractiveIndex1 = 1; // Air
+    const refractiveIndex2 = 1.5; // Glass or water
+
+    const slider = document.createElement('input');
+    slider.type = 'range';
+    slider.min = 0;
+    slider.max = 90;
+    slider.value = 45;
+    slider.style.width = '100%';
+    slider.oninput = (e) => {
+        const angleInDegrees = e.target.value;
+        lightRay.angle = angleInDegrees * (Math.PI / 180);
+        console.log("Slider changed: ", angleInDegrees);
+        draw();
+    };
+    document.getElementById('simulation').prepend(slider);
 
     function draw() {
-        context.clearRect(0, 0, canvas.width, canvas.height);
+        console.log("Drawing simulation frame");
+        
+        // Fill the background with black
+        context.fillStyle = '#000000';
+        context.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Draw the balls
-        balls.forEach(ball => {
-            context.beginPath();
-            context.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
-            context.fillStyle = ball.color;
-            context.fill();
-            context.closePath();
-        });
+        // Draw the boundary
+        context.beginPath();
+        context.moveTo(boundary.x1, boundary.y1);
+        context.lineTo(boundary.x2, boundary.y2);
+        context.strokeStyle = '#ffffff';
+        context.lineWidth = 2; // Boundary line width
+        context.stroke();
+        context.closePath();
 
-        // Draw the pins
-        pins.forEach(pin => {
-            context.beginPath();
-            context.arc(pin.x, pin.y, 5, 0, Math.PI * 2);
-            context.fillStyle = '#ffffff';
-            context.fill();
-            context.closePath();
-        });
+        // Draw the incident light ray
+        context.beginPath();
+        context.moveTo(lightRay.x, lightRay.y);
+        let incidentEndX = lightRay.x + 300 * Math.cos(lightRay.angle);
+        let incidentEndY = lightRay.y + 300 * Math.sin(lightRay.angle);
+        context.lineTo(incidentEndX, incidentEndY);
+        context.strokeStyle = '#ffeb3b';
+        context.lineWidth = 4; // Incident light beam thickness
+        context.stroke();
+        context.closePath();
 
-        // Draw the bins
-        const binWidth = canvas.width / columns;
-        for (let i = 0; i < columns; i++) {
-            context.fillStyle = 'rgba(255, 255, 255, 0.5)';
-            context.fillRect(i * binWidth, canvas.height - bins[i] * 10, binWidth - 2, bins[i] * 10);
+        // Calculate the point of incidence
+        if (incidentEndX >= boundary.x1) {
+            incidentEndX = boundary.x1;
+            incidentEndY = lightRay.y + (boundary.x1 - lightRay.x) * Math.tan(lightRay.angle);
         }
+
+        // Calculate reflection
+        const reflectionAngle = Math.PI - lightRay.angle;
+        const reflectionEndX = incidentEndX + 300 * Math.cos(reflectionAngle);
+        const reflectionEndY = incidentEndY + 300 * Math.sin(reflectionAngle);
+
+        // Calculate refraction using Snell's law
+        const incidentAngle = lightRay.angle - Math.PI / 2;
+        const sinIncidentAngle = Math.sin(incidentAngle);
+        const sinRefractedAngle = (refractiveIndex1 / refractiveIndex2) * sinIncidentAngle;
+        const refractedAngle = Math.asin(sinRefractedAngle) + Math.PI / 2;
+
+        const refractedEndX = incidentEndX + 300 * Math.cos(refractedAngle);
+        const refractedEndY = incidentEndY + 300 * Math.sin(refractedAngle);
+
+        // Draw the reflected light ray
+        context.beginPath();
+        context.moveTo(incidentEndX, incidentEndY);
+        context.lineTo(reflectionEndX, reflectionEndY);
+        context.strokeStyle = '#00ff00';
+        context.lineWidth = 4; // Reflected light beam thickness
+        context.stroke();
+        context.closePath();
+
+        // Draw the refracted light ray
+        context.beginPath();
+        context.moveTo(incidentEndX, incidentEndY);
+        context.lineTo(refractedEndX, refractedEndY);
+        context.strokeStyle = '#0000ff';
+        context.lineWidth = 4; // Refracted light beam thickness
+        context.stroke();
+        context.closePath();
     }
 
-    function update() {
-        balls.forEach(ball => {
-            if (ball.y < canvas.height - ball.radius) {
-                ball.y += ball.vy;
-
-                // Check for collisions with pins
-                pins.forEach(pin => {
-                    const dx = ball.x - pin.x;
-                    const dy = ball.y - pin.y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    if (distance < ball.radius + 5) {
-                        ball.vy *= 0.9; // Slow down the ball slightly after a collision
-                        ball.x += Math.random() < 0.5 ? -ball.radius : ball.radius;
-                    }
-                });
-            } else {
-                const binIndex = Math.floor(ball.x / (canvas.width / columns));
-                bins[binIndex]++;
-                balls = balls.filter(b => b !== ball);
-            }
-        });
-    }
-
-    function loop() {
-        update();
-        draw();
-        requestAnimationFrame(loop);
-    }
-
-    loop();
-
-    window.addBalls = function(num) {
-        for (let i = 0; i < num; i++) {
-            const radius = 5;
-            const x = canvas.width / 2;
-            const y = radius;
-            const vy = 2;
-            const color = '#' + Math.floor(Math.random() * 16777215).toString(16);
-            balls.push({ x, y, vy, radius, color });
-        }
-    };
+    draw();
 }
