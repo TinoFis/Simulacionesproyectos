@@ -2,7 +2,7 @@ function initSimulation() {
     const canvas = document.getElementById('simulationCanvas');
     const context = canvas.getContext('2d');
 
-    canvas.width = 600;
+    canvas.width = 800;
     canvas.height = 600;
 
     let lightRay = {
@@ -36,13 +36,16 @@ function initSimulation() {
     document.getElementById('simulation').prepend(slider);
 
     function draw() {
-        context.clearRect(0, 0, canvas.width, canvas.height);
+        // Fill the background with black
+        context.fillStyle = '#000000';
+        context.fillRect(0, 0, canvas.width, canvas.height);
 
         // Draw the boundary
         context.beginPath();
         context.moveTo(boundary.x1, boundary.y1);
         context.lineTo(boundary.x2, boundary.y2);
         context.strokeStyle = '#ffffff';
+        context.lineWidth = 2; // Boundary line width
         context.stroke();
         context.closePath();
 
@@ -53,6 +56,7 @@ function initSimulation() {
         let incidentEndY = lightRay.y + 300 * Math.sin(lightRay.angle);
         context.lineTo(incidentEndX, incidentEndY);
         context.strokeStyle = '#ffeb3b';
+        context.lineWidth = 4; // Incident light beam thickness
         context.stroke();
         context.closePath();
 
@@ -74,24 +78,4 @@ function initSimulation() {
         const refractedAngle = Math.asin(sinRefractedAngle) + Math.PI / 2;
 
         const refractedEndX = incidentEndX + 300 * Math.cos(refractedAngle);
-        const refractedEndY = incidentEndY + 300 * Math.sin(refractedAngle);
-
-        // Draw the reflected light ray
-        context.beginPath();
-        context.moveTo(incidentEndX, incidentEndY);
-        context.lineTo(reflectionEndX, reflectionEndY);
-        context.strokeStyle = '#00ff00';
-        context.stroke();
-        context.closePath();
-
-        // Draw the refracted light ray
-        context.beginPath();
-        context.moveTo(incidentEndX, incidentEndY);
-        context.lineTo(refractedEndX, refractedEndY);
-        context.strokeStyle = '#0000ff';
-        context.stroke();
-        context.closePath();
-    }
-
-    draw();
-}
+        const refracted
