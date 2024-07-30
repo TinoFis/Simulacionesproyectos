@@ -1,6 +1,15 @@
 function initSimulation() {
     const canvas = document.getElementById('simulationCanvas');
     const context = canvas.getContext('2d');
+    const controlsDiv = document.createElement('div');
+    controlsDiv.className = 'controls';
+    controlsDiv.innerHTML = `
+        <button onclick="addBalls(1)">Lanzar 1 bola</button>
+        <button onclick="addBalls(10)">Lanzar 10 bolas</button>
+        <button onclick="addBalls(20)">Lanzar 20 bolas</button>
+    `;
+    document.getElementById('simulation').prepend(controlsDiv);
+
     let balls = [];
     const pins = [];
     const columns = 10;
