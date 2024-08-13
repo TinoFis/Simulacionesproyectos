@@ -11,7 +11,7 @@
 
     <div id="loginForm">
         <h2>Login</h2>
-        <form id="form">
+        <form id="form" onsubmit="return handleLogin(event)">
             <label for="username">Usuario:</label>
             <input type="text" id="username" name="username" required>
             <br>
@@ -25,18 +25,62 @@
 
     <div id="selectionMenu" style="display: none;">
         <h2>Selecciona una simulación</h2>
-        <button onclick="loadSimulation('simulation1.js')">Simulación 1</button>
-        <button onclick="loadSimulation('simulation2.js')">Simulación 2</button>
-        <button onclick="loadSimulation('simulation3.js')">Simulación 3</button>
-        <button onclick="loadSimulation('simulation4.js')">Simulación 4</button>
-        <button onclick="loadSimulation('simulation5.js')">Simulación 5</button>
-        <button onclick="loadSimulation('simulation6.js')">Simulación 6</button>
+        <button onclick="loadSimulation('simulation1')">Simulación 1</button>
+        <button onclick="loadSimulation('simulation2')">Simulación 2</button>
+        <button onclick="loadSimulation('simulation3')">Simulación 3</button>
+        <button onclick="loadSimulation('simulation4')">Simulación 4</button>
+        <button onclick="loadSimulation('simulation5')">Simulación 5</button>
+        <button onclick="loadSimulation('simulation6')">Simulación 6</button>
     </div>
 
     <div id="simulation" style="display: none;">
-        <canvas id="simulationCanvas"></canvas>
+        <iframe id="simulationFrame" style="width: 100%; height: 80vh;" frameborder="0"></iframe>
     </div>
 
-    <script src="main.js"></script>
+    <script>
+        function handleLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (username === 'Usuario' && password === '12345') { // Replace with actual validation
+                document.getElementById('loginForm').style.display = 'none';
+                document.getElementById('selectionMenu').style.display = 'block';
+            } else {
+                document.getElementById('errorMessage').textContent = 'Usuario o contraseña incorrectos.';
+            }
+        }
+
+        function loadSimulation(simulationName) {
+            let url = '';
+            switch (simulationName) {
+                case 'simulation1':
+                    url = 'https://phet.colorado.edu/sims/html/magnets-and-electromagnets/latest/magnets-and-electromagnets_all.html?locale=es'; // Replace with actual link
+                    break;
+                case 'simulation2':
+                    url = 'https://phet.colorado.edu/sims/html/gravity-force-lab-basics/latest/gravity-force-lab-basics_all.html?locale=es'; // Placeholder - Replace with actual link
+                    break;
+                case 'simulation3':
+                    url = 'https://phet.colorado.edu/sims/html/build-a-nucleus/latest/build-a-nucleus_all.html?locale=es'; // Placeholder - Replace with actual link
+                    break;
+                case 'simulation4':
+                    url = 'https://phet.colorado.edu/sims/html/gravity-and-orbits/latest/gravity-and-orbits_all.html?locale=es'; // Placeholder - Replace with actual link
+                    break;
+                case 'simulation5':
+                    url = 'https://example.com/simulation5'; // Placeholder - Replace with actual link
+                    break;
+                case 'simulation6':
+                    url = 'https://example.com/simulation6'; // Placeholder - Replace with actual link
+                    break;
+                default:
+                    alert('Simulación no disponible.');
+                    return;
+            }
+            
+            document.getElementById('simulation').style.display = 'block';
+            document.getElementById('selectionMenu').style.display = 'none';
+            document.getElementById('simulationFrame').src = url;
+        }
+    </script>
 </body>
 </html>
